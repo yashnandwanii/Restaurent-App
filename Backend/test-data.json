@@ -1,0 +1,17 @@
+{
+    "title": "Haldirams",
+    "imageUrl": "https://res.cloudinary.com/dkwedcimq/image/upload/v1748687956/Haldiram.jpg",
+    "owner": "rovnovrna",
+    "code": "41007428",
+    "logoUrl": "https://res.cloudinary.com/dkwedcimq/image/upload/v1748687558/Haldiram.jpg",
+    "coords": {
+        "id": "2023",
+        "latitude": 28.63096,
+        "longitude": 77.222195,
+        "address": "698 Post St, San Francisco, CA 94109, United States",
+        "title": "Haldirams"
+    },
+    "email": "haldirams@example.com",
+    "password": "password123",
+    "phone": "1234567890"
+}
