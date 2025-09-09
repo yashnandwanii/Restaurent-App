@@ -252,7 +252,7 @@ const loginRestaurant = async (req, res) => {
 
         // Find restaurant by email
         const restaurant = await Restaurant.findOne({ email });
-
+        console.log("yash");
         if (!restaurant) {
             return res.status(401).json({
                 success: false,

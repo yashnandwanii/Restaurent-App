@@ -7,12 +7,12 @@ class ApiConfig {
   // If you're testing on iOS Simulator, use localhost
   // If you're testing on Android Emulator, use 10.0.2.2 (Android's localhost mapping)
   // If you're testing on physical device, use your machine's IP (172.25.252.81)
-  static const String baseUrl = 'http://localhost:6013/api';
-  static const String socketUrl = 'http://localhost:6013';
+  static const String baseUrl = 'http://localhost:3001/api';
+  static const String socketUrl = 'http://localhost:3001';
 
   // Alternative URLs for different environments
-  static const String androidEmulatorUrl = 'http://10.0.2.2:6013/api';
-  static const String physicalDeviceUrl = 'http://172.25.252.81:6013/api';
+  static const String androidEmulatorUrl = 'http://10.0.2.2:3001/api';
+  static const String physicalDeviceUrl = 'http://172.25.252.81:3001/api';
 
   // API Endpoints
   static const String authRegister = '/auth/restaurant/register';

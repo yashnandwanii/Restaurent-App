@@ -70,29 +70,6 @@ class MainApp extends StatelessWidget {
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
       case '/home':
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      // TODO: Add these routes when screens are created
-      // case '/add-food':
-      //   return MaterialPageRoute(builder: (_) => const AddFoodScreen());
-      // case '/edit-food':
-      //   final args = settings.arguments as Map<String, dynamic>?;
-      //   return MaterialPageRoute(
-      //     builder: (_) => EditFoodScreen(
-      //       foodItem: args?['foodItem'],
-      //     ),
-      //   );
-      // case '/orders':
-      //   return MaterialPageRoute(builder: (_) => const OrdersScreen());
-      // case '/order-detail':
-      //   final args = settings.arguments as Map<String, dynamic>?;
-      //   return MaterialPageRoute(
-      //     builder: (_) => OrderDetailScreen(
-      //       orderId: args?['orderId'] ?? '',
-      //     ),
-      //   );
-      // case '/profile':
-      //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
-      // case '/analytics':
-      //   return MaterialPageRoute(builder: (_) => const AnalyticsScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

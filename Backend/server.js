@@ -19,14 +19,11 @@ import restaurantRoutes from './routes/restaurant.js';
 // import paymentRoutes from './routes/payments.js'; // Temporarily disabled
 import uploadRoutes from './routes/upload.js';
 
-// Import configurations and services
-import './config/db.js';
-
 // Initialize Express app
 const app = express();
 const server = createServer(app);
 
-// Security and performance middleware
+// Security middleware
 app.use(helmet({
     contentSecurityPolicy: false, // Disable for development
     crossOriginEmbedderPolicy: false
@@ -78,6 +75,7 @@ mongoose.connect(process.env.MONGOURI || process.env.MONGO_URI)
     })
     .catch((err) => {
         console.error("Error connecting to MongoDB:", err);
+        process.exit(1); // Exit if cannot connect to database
     });
 
 // Health check endpoint
@@ -93,9 +91,7 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/food', foodRoutes);
-app.use('/api/restaurants', restaurantRoutes);
-// app.use('/api/orders', orderRoutes); // Temporarily disabled
-// app.use('/api/payments', paymentRoutes); // Temporarily disabled
+app.use('/api/restaurant', restaurantRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Global error handler
@@ -144,12 +140,17 @@ app.use('*', (req, res) => {
     });
 });
 
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM. Performing graceful shutdown...');
+    server.close(() => {
+        console.log('Server closed. Exiting process.');
+        process.exit(0);
+    });
+});
+
 const port = process.env.PORT || 3001;
 
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
-
-
-
-
