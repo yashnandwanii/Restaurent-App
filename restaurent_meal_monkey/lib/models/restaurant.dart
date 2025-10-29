@@ -74,23 +74,82 @@ class Restaurant {
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
+    // Handle rating field - backend returns it as a number, but we need an object
+    RestaurantRating? parsedRating;
+    if (json['rating'] != null) {
+      if (json['rating'] is Map<String, dynamic>) {
+        // Already in correct format
+        parsedRating = RestaurantRating.fromJson(json['rating']);
+      } else {
+        // Backend format: rating is a number, ratingCount is a string/number
+        final ratingValue = (json['rating'] is int) 
+            ? (json['rating'] as int).toDouble() 
+            : (json['rating'] as double);
+        final countValue = json['ratingCount'] != null
+            ? (json['ratingCount'] is String 
+                ? int.tryParse(json['ratingCount']) ?? 0
+                : json['ratingCount'] as int)
+            : 0;
+        parsedRating = RestaurantRating(average: ratingValue, count: countValue);
+      }
+    }
+
+    // Handle businessHours field - backend can return it as a string or Map
+    Map<String, BusinessHours>? parsedBusinessHours;
+    if (json['businessHours'] != null) {
+      if (json['businessHours'] is Map<String, dynamic>) {
+        // Already in correct format
+        parsedBusinessHours = Map<String, BusinessHours>.from(
+          (json['businessHours'] as Map<String, dynamic>).map(
+            (key, value) => MapEntry(key, BusinessHours.fromJson(value)),
+          ),
+        );
+      } else if (json['businessHours'] is String) {
+        // Backend format: businessHours is a simple string like "24/7"
+        // We'll just ignore it for now or could convert to a default structure
+        parsedBusinessHours = null;
+      }
+    }
+
+    // Handle address field - backend might have 'coords' instead
+    RestaurantAddress parsedAddress;
+    if (json['address'] != null && json['address'] is Map<String, dynamic>) {
+      parsedAddress = RestaurantAddress.fromJson(json['address']);
+    } else if (json['coords'] != null && json['coords'] is Map<String, dynamic>) {
+      // Backend returns coords with a different structure
+      final coords = json['coords'];
+      final addressText = coords['address'] ?? '';
+      // Try to parse the address text (e.g., "123 Admin Street, San Francisco, CA 94102")
+      final parts = addressText.split(',').map((s) => s.trim()).toList();
+      parsedAddress = RestaurantAddress(
+        street: parts.isNotEmpty ? parts[0] : '',
+        city: parts.length > 1 ? parts[1] : '',
+        state: parts.length > 2 ? parts[2].split(' ').first : '',
+        zipCode: parts.length > 2 ? parts[2].split(' ').skip(1).join(' ') : '',
+        coordinates: RestaurantCoordinates(
+          lat: (coords['latitude'] ?? 0.0).toDouble(),
+          lng: (coords['longitude'] ?? 0.0).toDouble(),
+        ),
+      );
+    } else {
+      // Default empty address
+      parsedAddress = RestaurantAddress(
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+      );
+    }
+
     return Restaurant(
       id: json['_id'] ?? json['id'],
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      address: RestaurantAddress.fromJson(json['address'] ?? {}),
+      address: parsedAddress,
       cuisine: List<String>.from(json['cuisine'] ?? []),
-      rating: json['rating'] != null
-          ? RestaurantRating.fromJson(json['rating'])
-          : null,
-      businessHours: json['businessHours'] != null
-          ? Map<String, BusinessHours>.from(
-              (json['businessHours'] as Map<String, dynamic>).map(
-                (key, value) => MapEntry(key, BusinessHours.fromJson(value)),
-              ),
-            )
-          : null,
+      rating: parsedRating,
+      businessHours: parsedBusinessHours,
       isActive: json['isActive'] ?? true,
       isVerified: json['isVerified'] ?? false,
       fcmTokens: List<String>.from(json['fcmTokens'] ?? []),

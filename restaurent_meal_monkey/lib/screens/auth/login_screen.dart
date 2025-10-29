@@ -29,15 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
+    print('🚀 LoginScreen: Starting login...');
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    print('📞 LoginScreen: Calling authProvider.login...');
     final success = await authProvider.login(
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
 
+    print('✅ LoginScreen: Login result: $success, mounted: $mounted');
+    
     if (success && mounted) {
+      print('🧭 LoginScreen: Navigating to /home...');
       Navigator.pushReplacementNamed(context, '/home');
+      print('✅ LoginScreen: Navigation complete!');
+    } else {
+      print('❌ LoginScreen: Not navigating - success: $success, mounted: $mounted');
     }
   }
 

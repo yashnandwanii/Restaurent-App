@@ -104,21 +104,36 @@ class AuthService {
   // Login restaurant
   Future<RestaurantAuth> login(RestaurantLoginRequest request) async {
     try {
+      print('🚀 Starting restaurant login...');
+      print('📤 Request data: ${request.toJson()}');
+      
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiConfig.authLogin,
         data: request.toJson(),
       );
 
+      print('📥 Response received: ${response.statusCode}');
+      print('📥 Response data: ${response.data}');
+
       if (response.data != null) {
         final apiResponse = ApiResponse<RestaurantAuth>.fromJson(
           response.data!,
-          (data) => RestaurantAuth.fromJson(data),
+          (data) {
+            print('🔍 Parsing RestaurantAuth from data: $data');
+            return RestaurantAuth.fromJson(data);
+          },
         );
+
+        print('✅ API Response success: ${apiResponse.success}');
+        print('✅ API Response data: ${apiResponse.data}');
+        print('✅ API Response message: ${apiResponse.message}');
 
         if (apiResponse.success && apiResponse.data != null) {
           await _saveAuthState(apiResponse.data!);
+          print('✅ Login successful! Token saved.');
           return apiResponse.data!;
         } else {
+          print('❌ Login failed: ${apiResponse.message}');
           throw ApiException(
             apiResponse.message ?? 'Login failed',
             type: ApiExceptionType.unauthorized,
@@ -132,6 +147,14 @@ class AuthService {
         );
       }
     } catch (e) {
+      print('💥 Login error: $e');
+      if (e is DioException) {
+        print('🔍 DioException details:');
+        print('  - Type: ${e.type}');
+        print('  - Message: ${e.message}');
+        print('  - Response: ${e.response?.data}');
+        print('  - Status Code: ${e.response?.statusCode}');
+      }
       if (e is ApiException) rethrow;
       throw const ApiException(
         'Login failed. Please try again.',

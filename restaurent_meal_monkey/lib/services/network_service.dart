@@ -13,9 +13,9 @@ class NetworkService {
       final urls = customUrl != null
           ? [customUrl]
           : [
-              'http://localhost:6013/api/health',
-              'http://10.0.2.2:6013/api/health', // Android emulator
-              'http://172.25.252.81:6013/api/health', // Your machine IP
+              'http://localhost:3001/health',
+              'http://10.0.2.2:3001/health', // Android emulator
+              'http://172.25.252.81:3001/health', // Your machine IP
             ];
 
       for (final url in urls) {
@@ -50,14 +50,14 @@ class NetworkService {
   // Get the best server URL for current environment
   Future<String?> getBestServerUrl() async {
     final urls = [
-      'http://localhost:6013/api',
-      'http://10.0.2.2:6013/api', // Android emulator
-      'http://172.25.252.81:6013/api', // Your machine IP
+      'http://localhost:3001/api',
+      'http://10.0.2.2:3001/api', // Android emulator
+      'http://172.25.252.81:3001/api', // Your machine IP
     ];
 
     for (final url in urls) {
       try {
-        final healthUrl = url.replaceAll('/api', '/api/health');
+        final healthUrl = url.replaceAll('/api', '/health');
         final response = await _dio.get(
           healthUrl,
           options: Options(

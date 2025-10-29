@@ -107,6 +107,10 @@ const RestaurantSchema = new Schema({
         type: Boolean,
         default: true
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     lastLogin: Date
 }, {
     timestamps: true,

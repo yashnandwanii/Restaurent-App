@@ -113,24 +113,33 @@ class AuthProvider extends ChangeNotifier {
   // Login restaurant
   Future<bool> login({required String email, required String password}) async {
     try {
+      print('🔐 AuthProvider: Starting login...');
       _state = AuthState.loading;
       _errorMessage = null;
       notifyListeners();
 
       final request = RestaurantLoginRequest(email: email, password: password);
 
+      print('📡 AuthProvider: Calling auth service...');
       final authResult = await _authService.login(request);
+
+      print('✅ AuthProvider: Login successful!');
+      print('  - Restaurant: ${authResult.restaurant.name}');
+      print('  - Token: ${authResult.token.substring(0, 20)}...');
 
       _restaurant = authResult.restaurant;
       _token = authResult.token;
       _state = AuthState.authenticated;
 
+      print('🔌 AuthProvider: Connecting to socket...');
       // Connect to socket
       await _socketService.connect();
 
+      print('✅ AuthProvider: All done! Notifying listeners...');
       notifyListeners();
       return true;
     } catch (e) {
+      print('❌ AuthProvider: Login failed with error: $e');
       _state = AuthState.error;
       _errorMessage = e.toString();
       notifyListeners();
